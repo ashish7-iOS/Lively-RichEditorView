@@ -420,21 +420,65 @@ RE.getSelectedHref = function() {
     return (href ? href : null);
 };
 
+// Parse the uid and username from anchor tag _className
+// returns : “[k=uidA,v=nameA], [k=uidB, v= nameB], ..”
+RE.getMentionUsers = function() {
+    var elements = document.getElementsByClassName('__user-mention');
+    var arr = [];
+    for (var i = 0; i < elements.length; i++) {
+        var k = "[k=".concat(elements[i].getAttribute("href").substring(13).substr(0,36));
+        var v = "v=".concat(elements[i].innerText.substring(1)).concat("]");
+        var mentionInfo = k.concat(",").concat(v)
+        arr.push(mentionInfo)
+    }
+    return arr.toString();
+}
+
+// Returns the cursor position relative to its current position onscreen.
+// Can be negative if it is above what is visible
+// returns xpos, ypos -> 1,10
+RE.getRelativeCaretPosition = function() {
+  var y = 0;
+  var x = 0;
+  var sel = window.getSelection();
+  if (sel.rangeCount) {
+    var range = sel.getRangeAt(0);
+    var needsWorkAround = (range.startOffset == 0)
+    /* Removing fixes bug when node name other than 'div' */
+    // && range.startContainer.nodeName.toLowerCase() == 'div');
+    if (needsWorkAround) {
+      x = range.startContainer.offsetLeft - window.pageXOffset;
+      y = range.startContainer.offsetTop - window.pageYOffset;
+    } else {
+      if (range.getClientRects) {
+        var rects = range.getClientRects();
+        if (rects.length > 0) {
+          x = rects[0].left;
+          y = rects[0].top;
+        }
+      }
+    }
+    var xPos = x.toString().concat(",");
+    var yPos = y.toString();
+    return xPos.concat(yPos);
+  }
+  }
+
 // Returns the cursor position relative to its current position onscreen.
 // Can be negative if it is above what is visible
 RE.getRelativeCaretYPosition = function() {
-    let y = 0;
-    let sel = window.getSelection();
+    var y = 0;
+    var sel = window.getSelection();
     if (sel.rangeCount) {
-        const range = sel.getRangeAt(0);
-        const needsWorkAround = (range.startOffset == 0);
+        var range = sel.getRangeAt(0);
+        var needsWorkAround = (range.startOffset == 0)
         /* Removing fixes bug when node name other than 'div' */
         // && range.startContainer.nodeName.toLowerCase() == 'div');
         if (needsWorkAround) {
             y = range.startContainer.offsetTop - window.pageYOffset;
         } else {
             if (range.getClientRects) {
-                let rects = range.getClientRects();
+                var rects = range.getClientRects();
                 if (rects.length > 0) {
                     y = rects[0].top;
                 }

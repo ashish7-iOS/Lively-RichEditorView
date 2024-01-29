@@ -42,3 +42,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Ignore RichEditorView Xcode project and workspace settings
+RichEditorView.xcodeproj/
+RichEditorView.xcworkspace/
+xcshareddata/
+

@@ -516,6 +516,25 @@ private let DefaultInnerLineHeight: Int = 21
         }
     }
     
+    public func relativeCaretPosition(handler: @escaping (CGPoint) -> Void) {
+        runJS("RE.getRelativeCaretPosition()") { val in
+            let splits = val.components(separatedBy: ",")
+            if splits.count > 1 {
+                if let xPoint = Int(splits[0]), let yPoint = Int(splits[1]) {
+                    let point: CGPoint = CGPoint(x: xPoint, y: yPoint)
+                    handler(point)
+                }
+            }
+            
+        }
+    }
+    
+   public func getMentionUser(handler: @escaping (String) -> Void) {
+        runJS("RE.getMentionUsers()") { val in
+            handler(val)
+        }
+    }
+    
     private func updateHeight() {
         runJS("document.getElementById('editor').clientHeight") { heightString in
             let height = Int(heightString) ?? 0
